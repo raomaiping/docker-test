@@ -1,4 +1,4 @@
-# docker-test
+# my-project
 
 ## Project setup
 ```
