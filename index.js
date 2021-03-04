@@ -33,6 +33,7 @@ http.createServer(async (req, res) => {
     console.log('receive request')
     console.log(req.url)
     if (req.method === 'POST' && req.url === '/') {
+        console.log('我进来了');
         const data = await resolvePost(req);
         const projectDir = path.resolve(__dirname,`./${data.repository.name}`)
         deleteFolderRecursive(projectDir)
@@ -67,13 +68,13 @@ http.createServer(async (req, res) => {
         })
 
         // 创建 docker 容器
-        execSync(`docker run -d -p 8888:80 --name ${data.repository.name}-container ${data.repository.name}-image:latest`, {
+        execSync(`docker run -d -p 8080:80 --name ${data.repository.name}-container ${data.repository.name}-image:latest`, {
             stdio: 'inherit',
         })
 
         console.log('deploy success')
     }
     res.end('ok')
-}).listen(3001, () => {
+}).listen(5000, () => {
     console.log('server is ready')
 })
