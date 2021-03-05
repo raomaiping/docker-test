@@ -3,6 +3,7 @@
     <div>hello docker</div>
     <img alt="Vue logo" src="./assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js App"/>
+    我来了
   </div>
 </template>
 

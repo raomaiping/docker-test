@@ -18,28 +18,16 @@ function deleteFolderRecursive(path) {
     }
 }
 
-const resolvePost = req =>
-    new Promise(resolve => {
-        let chunk = "";
-        req.on("data", data => {
-            chunk += data;
-        });
-        req.on("end", () => {
-            resolve(JSON.parse(chunk));
-        });
-    });
 
 http.createServer(async (req, res) => {
     console.log('receive request')
     console.log(req.url)
     if (req.method === 'POST' && req.url === '/') {
-        console.log('我进来了');
-        const data = await resolvePost(req);
-        const projectDir = path.resolve(__dirname,`./${data.repository.name}`)
+        const projectDir = path.resolve(__dirname,`./docker-test`)
         deleteFolderRecursive(projectDir)
 
         // 拉取仓库最新代码
-        execSync(`git clone https://github.com/raomaiping/${data.repository.name}.git ${projectDir}`, {
+        execSync(`git clone https://github.com/raomaiping/docker-test.git ${projectDir}`, {
             stdio: 'inherit',
         })
 
@@ -51,7 +39,7 @@ http.createServer(async (req, res) => {
 
 
         // 创建 docker 镜像
-        execSync(`docker build -t ${data.repository.name}-image:latest .`, {
+        execSync(`docker build -t docker-test-image:latest .`, {
             stdio: 'inherit',
             cwd: projectDir
         })
@@ -63,12 +51,12 @@ http.createServer(async (req, res) => {
         // })
 
         // 销毁 docker 容器
-        execSync(`docker ps -a -f "name=^${data.repository.name}-container" --format="{{.Names}}" | xargs -r docker stop | xargs -r docker rm`, {
+        execSync(`docker ps -a -f "name=^docker-test-container" --format="{{.Names}}" | xargs -r docker stop | xargs -r docker rm`, {
             stdio: 'inherit',
         })
 
         // 创建 docker 容器
-        execSync(`docker run -d -p 8080:80 --name ${data.repository.name}-container ${data.repository.name}-image:latest`, {
+        execSync(`docker run -d -p 8080:80 --name docker-test-container docker-test-image:latest`, {
             stdio: 'inherit',
         })
 
